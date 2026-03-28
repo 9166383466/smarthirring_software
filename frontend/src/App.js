@@ -18,9 +18,10 @@ function App() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/analyze", {
-        method: "POST",
-        body: formData
+     const response = await fetch("https://smarthirring-backend.onrender.com/analyze", {
+  method: "POST",
+  body: formData
+
       });
 
       const data = await response.json();
