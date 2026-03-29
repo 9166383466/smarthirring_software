@@ -1,3 +1,4 @@
+require('dotenv').config(); // 👈 SABSE ZAROORI: Ye line variables read karne ke liye hai
 const express = require("express");
 const multer = require("multer");
 const mongoose = require("mongoose");
@@ -16,7 +17,6 @@ app.use(cors());
 app.use(express.json());
 
 // ================= UPLOADS FOLDER CHECK =================
-// Ye ensure karega ki folder exists karta hai Render par
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
@@ -34,11 +34,17 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // ================= MONGODB CONNECTION =================
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/resumeDB";
+const mongoURI = process.env.MONGO_URI; 
 
-mongoose.connect(MONGO_URI)
-  .then(() => console.log("MongoDB Connected Successfully! ✅"))
-  .catch(err => console.log("MongoDB Connection Error: ", err));
+console.log("Checking Database Connection...");
+
+if (!mongoURI) {
+    console.error("ERROR: MONGO_URI is not defined! Make sure Env Group is linked. ❌");
+} else {
+    mongoose.connect(mongoURI)
+      .then(() => console.log("MongoDB Connected Successfully! ✅"))
+      .catch(err => console.error("MongoDB Connection Error: ", err.message));
+}
 
 // ================= ROUTES =================
 
@@ -46,7 +52,7 @@ app.get("/", (req, res) => {
   res.send("Smart Hiring Backend is running 🚀");
 });
 
-// UPLOAD & AI ANALYSIS (Critical Path)
+// UPLOAD & AI ANALYSIS
 app.post("/upload", upload.single("resume"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded ❌" });
@@ -54,8 +60,12 @@ app.post("/upload", upload.single("resume"), async (req, res) => {
     const formData = new FormData();
     formData.append("resume", fs.createReadStream(req.file.path));
 
-    // Render Settings mein 'AI_SERVICE_URL' check karein
-    const AI_URL = process.env.AI_SERVICE_URL || "http://127.0.0.1:8000/analyze";
+    // 'AI_SERVICE_URL' link from Render Env Group
+    const AI_URL = process.env.AI_SERVICE_URL;
+
+    if (!AI_URL) {
+        return res.status(500).json({ error: "AI Service URL not configured in Backend ❌" });
+    }
 
     console.log(`Sending file to AI at: ${AI_URL}`);
 
@@ -63,10 +73,10 @@ app.post("/upload", upload.single("resume"), async (req, res) => {
       headers: {
         ...formData.getHeaders(),
       },
-      timeout: 30000 // 30 seconds wait for AI
+      timeout: 60000 // 60 seconds (AI takes time to process PDF)
     });
 
-    // File delete karein
+    // File delete after processing
     if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
     
     res.json(response.data);
@@ -78,7 +88,7 @@ app.post("/upload", upload.single("resume"), async (req, res) => {
   }
 });
 
-// LOGIN & REGISTER (Baki code wahi rahega)
+// LOGIN & REGISTER
 app.post("/register", async (req, res) => {
   try {
     const { email, password } = req.body;
