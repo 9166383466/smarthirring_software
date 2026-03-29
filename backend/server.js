@@ -70,6 +70,8 @@ app.post("/login", async (req, res) => {
     res.json({ message: "Login Successful", user: { email: user.email } });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
-
+app.get("/", (req, res) => {
+  res.send("Smart Hiring Backend is Live and Running! 🚀");
+});
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Server: ${PORT} 🚀`));
