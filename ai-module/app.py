@@ -25,6 +25,7 @@ def extract_text(file):
     return text
 
 # API route
+
 @app.route('/analyze', methods=['POST'])
 def analyze():
     if 'resume' not in request.files:
