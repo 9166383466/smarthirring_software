@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage: storage });
-
+console.log("All Env Vars:", process.env);
 // ================= MONGODB CONNECTION =================
 const mongoURI = process.env.MONGO_URI; 
 
