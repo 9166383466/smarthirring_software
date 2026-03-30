@@ -1,3 +1,1 @@
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
-}
+echo { "rewrites": [ { "source": "/(.*)", "destination": "/" } ] } > vercel.json
