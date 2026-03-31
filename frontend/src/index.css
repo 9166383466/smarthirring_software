@@ -1,3 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Agar tu chaho to niche apna purana body style rakh sakte ho, 
+lekin upar wali 3 lines hona sabse zaroori hain */
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +12,5 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  background-color: #0f172a; /* Dark theme ke liye */
 }
