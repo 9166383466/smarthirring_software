@@ -1,28 +1,24 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import pdfplumber  # PyPDF2 se behtar hai (Install: pip install pdfplumber)
+import pdfplumber
 import os
 
 app = Flask(__name__)
 CORS(app)
 
-# --- 1. KNOWLEDGE BASE ---
+# AI Knowledge Base
 job_roles = {
-    "python": ["Backend Developer", "Data Scientist"],
-    "java": ["Java Developer", "Enterprise Architect"],
-    "react": ["Frontend Developer", "UI Engineer"],
-    "javascript": ["Full Stack Developer", "Web Developer"],
-    "sql": ["Database Engineer", "Data Analyst"],
+    "python": ["Backend Developer", "Data Scientist", "Software Engineer"],
+    "react": ["Frontend Developer", "UI/UX Engineer"],
+    "node": ["Backend Developer", "Full Stack Developer"],
+    "javascript": ["Web Developer", "App Developer"],
     "mongodb": ["Database Administrator"],
-    "nodejs": ["Backend Lead"],
-    "c++": ["Systems Engineer", "Game Developer"]
+    "sql": ["Data Analyst", "Database Engineer"]
 }
 
-# Score badhane ke liye extra keywords (Projects/Tools)
-project_keywords = ["github", "deployed", "developed", "api", "database", "authentication", "system", "portfolio"]
+project_keywords = ["github", "deployed", "live link", "api", "database", "optimized", "developed", "portfolio"]
 
 def extract_text(file):
-    # pdfplumber use kar rahe hain taaki formatting errors na aayein
     with pdfplumber.open(file) as pdf:
         text = ""
         for page in pdf.pages:
@@ -32,66 +28,53 @@ def extract_text(file):
 @app.route('/analyze', methods=['POST'])
 def analyze():
     if 'resume' not in request.files:
-        return jsonify({"error": "No file uploaded ❌"}), 400
+        return jsonify({"error": "No file uploaded"}), 400
 
     file = request.files['resume']
     try:
         raw_text = extract_text(file).lower()
     except Exception as e:
-        return jsonify({"error": f"PDF read error ❌ {str(e)}"}), 500
+        return jsonify({"error": "Failed to parse PDF"}), 500
 
-    # --- 2. AI SCORING LOGIC ---
+    # --- AI SCORING ENGINE ---
     skills_list = list(job_roles.keys())
     found_skills = [s for s in skills_list if s in raw_text]
-    
-    # Project Detection Logic
     found_projects = [p for p in project_keywords if p in raw_text]
     
-    # Calculation: Skills (60%) + Projects/Format (40%)
-    base_score = len(found_skills) * 15
-    project_bonus = len(found_projects) * 5
-    total_score = min(base_score + project_bonus, 100)
+    score = min((len(found_skills) * 15) + (len(found_projects) * 5), 100)
 
-    # --- 3. EXPLANATION & RECOMMENDATIONS ---
+    # --- PROFESSIONAL ENGLISH FEEDBACK ---
     explanation = ""
     recommendations = []
 
-    if total_score < 50:
-        explanation = "Aapka score low hai kyunki resume mein industry-standard keywords aur projects ki kami hai."
+    if score < 50:
+        explanation = "Your ATS score is currently low due to a lack of industry-standard keywords and verifiable project links."
         recommendations = [
-            "Apne projects ka 'GitHub' ya 'Live Demo' link zaroori add karein.",
-            "Technical skills section mein missing keywords add karein: " + ", ".join([s for s in skills_list if s not in found_skills][:3]),
-            "Experience section mein Bullet Points ka use karein."
+            "Enhance your 'Technical Skills' section with more relevant stack keywords.",
+            "Mandatory: Include 'GitHub' or 'Live Demo' links for your projects.",
+            "Use a clean, single-column format to ensure ATS readability."
         ]
-    elif total_score < 85:
-        explanation = "Good work! Aapka resume kafi had tak ATS-friendly hai, par kuch tweaks ki zaroorat hai."
+    elif score < 85:
+        explanation = "Great foundation! Your resume is professional, but needs minor optimizations to reach the top-tier candidate pool."
         recommendations = [
-            "Achievements ko Numbers (e.g., 20% faster, 50+ users) mein likhein.",
-            "In tools ka zikr karein: Docker, AWS, ya Git agar aapne kaam kiya hai.",
-            "Formatting ko single-column rakhein taaki neural engine fast scan kar sake."
+            "Add quantitative data (e.g., 'Improved performance by 30%') to your experience.",
+            "Include keywords for DevOps tools like Docker, AWS, or Git if applicable.",
+            "Refine your professional summary to highlight your unique value proposition."
         ]
     else:
-        explanation = "Excellent! Aapka profile top-tier hai aur hiring chances kafi high hain."
+        explanation = "Excellent! Your profile is highly optimized and ready for top-tier corporate ATS systems."
         recommendations = [
-            "Ab direct referrals aur LinkedIn networking par focus karein.",
-            "Apne top skills ke liye certifications ka ek alag badge lagayein.",
-            "Resume ka PDF version hi update rakhein."
+            "Focus on direct LinkedIn networking and referrals for faster results.",
+            "Create a separate section for professional certifications and badges.",
+            "Keep your Portfolio/GitHub updated with your latest contributions."
         ]
 
-    # Job Recommendations
-    recommended_jobs = []
-    for skill in found_skills:
-        recommended_jobs.extend(job_roles.get(skill, []))
-    recommended_jobs = list(set(recommended_jobs))
-
     return jsonify({
-        "score": total_score,
+        "score": score,
         "skills": found_skills,
-        "projects_detected": len(found_projects) > 0,
         "explanation": explanation,
         "recommendations": recommendations,
-        "how_to_improve": f"Aapka score badhane ke liye aapko {100 - total_score}% aur depth ki zaroorat hai.",
-        "recommended_jobs": recommended_jobs
+        "how_to_improve": f"To boost your score by another {100 - score}%, focus on project depth and specific metrics."
     })
 
 if __name__ == "__main__":
