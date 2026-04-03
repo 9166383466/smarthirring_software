@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { 
-  ShieldCheck, Zap, FileText, BarChart3, 
-  ArrowRight, Github, Twitter, Linkedin, Mail, 
-  CheckCircle2, AlertCircle, History, Loader2, LogOut
+  ShieldCheck, FileText, ArrowRight, History, Loader2, LogOut 
 } from 'lucide-react';
 
 function App() {
@@ -58,7 +56,6 @@ function App() {
       
       if (res.ok) {
         setAiData(data);
-        // Local state update for instant UI feedback
         setUser(prev => ({
           ...prev,
           history: [{ 
@@ -74,7 +71,6 @@ function App() {
     finally { setLoading(false); }
   };
 
-  // --- LANDING PAGE ---
   if (!user) {
     return (
       <div className="min-h-screen bg-[#0F172A] text-white flex flex-col font-sans selection:bg-blue-500/30">
@@ -103,7 +99,6 @@ function App() {
           </div>
         </main>
 
-        {/* Login Modal */}
         {showLogin && (
           <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
             <div className="bg-[#1E293B] p-12 rounded-[3rem] w-full max-w-md border border-slate-700 shadow-2xl">
@@ -131,7 +126,6 @@ function App() {
     );
   }
 
-  // --- DASHBOARD ---
   return (
     <div className="min-h-screen bg-[#0F172A] text-white flex flex-col font-sans">
       <nav className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 sticky top-0 z-20 backdrop-blur-md">
@@ -148,7 +142,6 @@ function App() {
       </nav>
 
       <main className="max-w-6xl mx-auto p-6 md:p-10 w-full space-y-10">
-        {/* Scan Input */}
         <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-10 md:p-16 rounded-[3.5rem] border border-slate-700 shadow-2xl text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 blur-[100px]"></div>
           <h2 className="text-4xl md:text-5xl font-black mb-4">Neural Scan Engine</h2>
@@ -167,7 +160,6 @@ function App() {
           </div>
         </div>
 
-        {/* Results View */}
         {aiData && (
           <div className="animate-in fade-in slide-in-from-bottom-5 duration-700 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -187,7 +179,6 @@ function App() {
           </div>
         )}
 
-        {/* History Logs */}
         <div className="bg-slate-800 rounded-[3rem] border border-slate-700 overflow-hidden shadow-2xl">
           <div className="p-8 bg-slate-900/50 border-b border-slate-700 flex justify-between items-center px-12">
             <h3 className="font-black text-lg flex items-center gap-3 italic">
