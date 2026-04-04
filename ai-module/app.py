@@ -14,7 +14,9 @@ job_roles = {
     "javascript": ["Web Developer", "App Developer"],
     "mongodb": ["Database Administrator"],
     "sql": ["Data Analyst", "Database Engineer"],
-    "java":["Data engineering "]
+    "java":["Data engineering "],
+    "html": ["Frontend Developer"],
+    "css":["Web Developer"]
 }
 
 project_keywords = ["github", "deployed", "live link", "api", "database", "optimized", "developed", "portfolio"]
