@@ -13,7 +13,8 @@ job_roles = {
     "node": ["Backend Developer", "Full Stack Developer"],
     "javascript": ["Web Developer", "App Developer"],
     "mongodb": ["Database Administrator"],
-    "sql": ["Data Analyst", "Database Engineer"]
+    "sql": ["Data Analyst", "Database Engineer"],
+    "java":["Data engineering "]
 }
 
 project_keywords = ["github", "deployed", "live link", "api", "database", "optimized", "developed", "portfolio"]

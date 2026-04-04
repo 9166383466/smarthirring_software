@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { 
-  ShieldCheck, FileText, ArrowRight, History, Loader2, LogOut 
+  ShieldCheck, FileText, ArrowRight, History, Loader2, LogOut, CheckCircle2, Sparkles
 } from 'lucide-react';
 
 function App() {
@@ -13,7 +13,6 @@ function App() {
   const [password, setPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
 
-  // API URL Configuration
   const BASE_URL = process.env.REACT_APP_API_URL || "https://smarthirring-backend.onrender.com";
   const API_URL = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 
@@ -36,24 +35,19 @@ function App() {
           setIsRegistering(false);
         }
       } else { alert(data.error || data.message || "Auth Failed"); }
-    } catch (err) { alert("Backend Unreachable! Check your API URL."); }
+    } catch (err) { alert("Backend Unreachable!"); }
   };
 
   const handleUpload = async () => {
     if (!file) return alert("Please select a PDF file first!");
-    
     const formData = new FormData();
     formData.append("resume", file);
     if (user?.email) formData.append("email", user.email);
     
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/upload`, { 
-        method: "POST", 
-        body: formData 
-      });
+      const res = await fetch(`${API_URL}/upload`, { method: "POST", body: formData });
       const data = await res.json();
-      
       if (res.ok) {
         setAiData(data);
         setUser(prev => ({
@@ -64,36 +58,33 @@ function App() {
             date: new Date().toISOString() 
           }, ...(prev.history || [])]
         }));
-      } else {
-        alert("Scan Failed: " + (data.error || "Internal Server Error"));
-      }
-    } catch (err) { alert("Network Error! Check your connection."); }
+      } else { alert("Scan Failed"); }
+    } catch (err) { alert("Network Error!"); }
     finally { setLoading(false); }
   };
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#0F172A] text-white flex flex-col font-sans selection:bg-blue-500/30">
+      <div className="min-h-screen bg-[#0F172A] text-white flex flex-col font-sans">
         <nav className="p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-2">
             <ShieldCheck className="text-blue-500" size={32} />
             <span className="text-2xl font-black tracking-tighter uppercase">Smart-Hire.ai</span>
           </div>
-          <button onClick={() => setShowLogin(true)} className="bg-blue-600 hover:bg-blue-500 px-8 py-2.5 rounded-full font-bold transition-all shadow-lg shadow-blue-900/40 active:scale-95">
+          <button onClick={() => setShowLogin(true)} className="bg-blue-600 hover:bg-blue-500 px-8 py-2.5 rounded-full font-bold transition-all shadow-lg active:scale-95">
             Login
           </button>
         </nav>
 
-        <main className="flex-1 flex flex-col items-center justify-center text-center px-6 py-20">
-          <div className="max-w-5xl bg-slate-800/20 border border-slate-700/50 p-16 rounded-[4rem] backdrop-blur-2xl shadow-2xl relative">
-            <div className="absolute -top-10 -left-10 w-40 h-40 bg-blue-600/10 blur-[100px] rounded-full"></div>
+        <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
+          <div className="max-w-5xl bg-slate-800/20 border border-slate-700/50 p-16 rounded-[4rem] backdrop-blur-2xl relative">
             <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter leading-none">
               Precision <span className="text-blue-500">Hiring</span> <br /> Starts Here.
             </h1>
-            <p className="text-slate-400 text-xl md:text-2xl mb-12 max-w-3xl mx-auto font-medium leading-relaxed">
+            <p className="text-slate-400 text-xl mb-12 max-w-3xl mx-auto font-medium">
               Analyze your resume with our proprietary neural engine. Get ATS scores, skill gaps, and professional roadmaps in seconds.
             </p>
-            <button onClick={() => setShowLogin(true)} className="group bg-blue-600 px-12 py-5 rounded-2xl font-black text-xl hover:bg-blue-500 transition-all flex items-center gap-3 shadow-2xl shadow-blue-900/40">
+            <button onClick={() => setShowLogin(true)} className="group bg-blue-600 px-12 py-5 rounded-2xl font-black text-xl hover:bg-blue-500 transition-all flex items-center gap-3 mx-auto">
               Get Started Free <ArrowRight className="group-hover:translate-x-2 transition-transform" />
             </button>
           </div>
@@ -102,18 +93,12 @@ function App() {
         {showLogin && (
           <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
             <div className="bg-[#1E293B] p-12 rounded-[3rem] w-full max-w-md border border-slate-700 shadow-2xl">
-              <div className="flex justify-between items-start mb-8">
-                <div>
-                  <h2 className="text-3xl font-black text-white">{isRegistering ? "Join Us" : "Welcome Back"}</h2>
-                  <p className="text-slate-500 text-sm mt-1">Secure Neural Authentication</p>
-                </div>
-                <button onClick={() => setShowLogin(false)} className="text-slate-500 hover:text-white text-2xl">×</button>
-              </div>
+              <h2 className="text-3xl font-black text-white mb-2">{isRegistering ? "Join Us" : "Welcome Back"}</h2>
               <form onSubmit={handleAuth} className="space-y-5">
-                <input className="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 focus:border-blue-500 text-white outline-none" type="email" placeholder="Email Address" onChange={(e)=>setEmail(e.target.value)} required />
-                <input className="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 focus:border-blue-500 text-white outline-none" type="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)} required />
-                <button className="w-full bg-blue-600 py-4 rounded-2xl font-black text-lg hover:bg-blue-500 shadow-lg transition-all">
-                  {isRegistering ? "Create Founder Account" : "Access Dashboard"}
+                <input className="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 text-white outline-none" type="email" placeholder="Email" onChange={(e)=>setEmail(e.target.value)} required />
+                <input className="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 text-white outline-none" type="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)} required />
+                <button className="w-full bg-blue-600 py-4 rounded-2xl font-black text-lg hover:bg-blue-500 transition-all">
+                  {isRegistering ? "Register" : "Login"}
                 </button>
               </form>
               <p onClick={() => setIsRegistering(!isRegistering)} className="mt-8 text-center text-blue-400 cursor-pointer font-bold hover:underline">
@@ -131,26 +116,21 @@ function App() {
       <nav className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 sticky top-0 z-20 backdrop-blur-md">
         <div className="flex items-center gap-2">
             <ShieldCheck className="text-blue-500" size={24} />
-            <span className="font-black italic tracking-tighter">SMART-HIRE DASHBOARD</span>
+            <span className="font-black italic tracking-tighter uppercase">Smart-Hire Dashboard</span>
         </div>
-        <div className="flex items-center gap-6">
-          <span className="text-slate-500 font-bold text-[10px] uppercase tracking-widest hidden md:block">{user.email}</span>
-          <button onClick={()=>setUser(null)} className="flex items-center gap-2 text-red-500 font-black hover:text-red-400 text-xs transition-colors">
-            <LogOut size={16} /> LOGOUT
-          </button>
-        </div>
+        <button onClick={()=>setUser(null)} className="flex items-center gap-2 text-red-500 font-black text-xs">
+          <LogOut size={16} /> LOGOUT
+        </button>
       </nav>
 
       <main className="max-w-6xl mx-auto p-6 md:p-10 w-full space-y-10">
-        <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-10 md:p-16 rounded-[3.5rem] border border-slate-700 shadow-2xl text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 blur-[100px]"></div>
-          <h2 className="text-4xl md:text-5xl font-black mb-4">Neural Scan Engine</h2>
-          <p className="text-slate-400 text-lg mb-12">Upload PDF resume for deep-learning analysis.</p>
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-10 md:p-16 rounded-[3.5rem] border border-slate-700 shadow-2xl text-center">
+          <h2 className="text-4xl font-black mb-4">Neural Scan Engine</h2>
           <div className="flex flex-col items-center gap-8">
             <label className="group cursor-pointer bg-slate-900/50 p-6 rounded-3xl border-2 border-dashed border-slate-700 hover:border-blue-500 transition-all w-full max-w-md">
                 <input type="file" accept="application/pdf" onChange={(e)=>setFile(e.target.files[0])} className="hidden" />
                 <div className="flex flex-col items-center gap-2">
-                    <FileText className="text-slate-500 group-hover:text-blue-500 transition-colors" size={40} />
+                    <FileText className="text-slate-500 group-hover:text-blue-500" size={40} />
                     <span className="text-slate-400 font-medium">{file ? file.name : "Select Resume (PDF)"}</span>
                 </div>
             </label>
@@ -161,14 +141,14 @@ function App() {
         </div>
 
         {aiData && (
-          <div className="animate-in fade-in slide-in-from-bottom-5 duration-700 space-y-6">
+          <div className="animate-in fade-in slide-in-from-bottom-5 duration-700 space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-blue-600 p-10 rounded-[2.5rem] flex flex-col items-center justify-center shadow-2xl">
-                <span className="text-blue-100 text-xs font-black uppercase tracking-widest mb-2">ATS Score</span>
+                <span className="text-blue-100 text-xs font-black uppercase mb-2">ATS Score</span>
                 <div className="text-7xl font-black">{aiData.score || 0}%</div>
               </div>
               <div className="md:col-span-2 bg-slate-800 border border-slate-700 p-10 rounded-[2.5rem]">
-                <span className="text-slate-400 text-xs font-black uppercase tracking-widest mb-6 block">Detected Competencies</span>
+                <span className="text-slate-400 text-xs font-black uppercase mb-6 block">Detected Competencies</span>
                 <div className="flex flex-wrap gap-3">
                   {aiData.skills?.map((s, i) => (
                     <span key={i} className="bg-slate-700/50 px-5 py-2 rounded-xl text-sm font-bold text-blue-400 border border-blue-500/20">{s}</span>
@@ -176,19 +156,39 @@ function App() {
                 </div>
               </div>
             </div>
+
+            {/* --- FEEDBACK SECTION START --- */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-[2.5rem] relative overflow-hidden group">
+                    <Sparkles className="absolute top-4 right-4 text-blue-500/20 group-hover:text-blue-500 transition-colors" />
+                    <h4 className="text-blue-400 font-black text-sm uppercase mb-4 tracking-widest">Neural Insights</h4>
+                    <p className="text-slate-300 leading-relaxed italic">"{aiData.explanation}"</p>
+                </div>
+                
+                <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-[2.5rem]">
+                    <h4 className="text-emerald-400 font-black text-sm uppercase mb-6 tracking-widest">Strategic Roadmap</h4>
+                    <ul className="space-y-4">
+                        {aiData.recommendations?.map((rec, i) => (
+                            <li key={i} className="flex gap-4 items-start text-sm text-slate-400">
+                                <CheckCircle2 className="text-emerald-500 shrink-0" size={18} />
+                                <span>{rec}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+            {/* --- FEEDBACK SECTION END --- */}
           </div>
         )}
 
-        <div className="bg-slate-800 rounded-[3rem] border border-slate-700 overflow-hidden shadow-2xl">
-          <div className="p-8 bg-slate-900/50 border-b border-slate-700 flex justify-between items-center px-12">
-            <h3 className="font-black text-lg flex items-center gap-3 italic">
-              <History className="text-blue-500" /> ANALYSIS HISTORY
-            </h3>
+        <div className="bg-slate-800 rounded-[3rem] border border-slate-700 overflow-hidden">
+          <div className="p-8 bg-slate-900/50 border-b border-slate-700 px-12">
+            <h3 className="font-black text-lg flex items-center gap-3 italic"><History className="text-blue-500" /> ANALYSIS HISTORY</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-slate-900/80 text-slate-500 text-[10px] uppercase font-black tracking-widest">
+                <tr className="bg-slate-900/80 text-slate-500 text-[10px] uppercase font-black">
                   <th className="p-8 px-12">Date</th>
                   <th className="p-8">Match Quality</th>
                   <th className="p-8">Core Skills</th>
@@ -197,13 +197,10 @@ function App() {
               </thead>
               <tbody className="divide-y divide-slate-700/50">
                 {user.history?.length > 0 ? user.history.map((h, i) => (
-                  <tr key={i} className="hover:bg-slate-700/10 transition-colors">
+                  <tr key={i} className="hover:bg-slate-700/10">
                     <td className="p-8 px-12 text-sm text-slate-400">{new Date(h.date).toLocaleDateString()}</td>
                     <td className="p-8">
                         <div className="flex items-center gap-3">
-                            <div className="w-16 h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                                <div className="h-full bg-blue-500" style={{ width: `${h.score}%` }}></div>
-                            </div>
                             <span className="font-black text-blue-400">{h.score}%</span>
                         </div>
                     </td>
@@ -211,7 +208,7 @@ function App() {
                     <td className="p-8 text-right px-12"><span className="text-[10px] bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-lg font-black border border-emerald-500/20">VERIFIED</span></td>
                   </tr>
                 )) : (
-                  <tr><td colSpan="4" className="p-20 text-center text-slate-500 italic">No previous scans found.</td></tr>
+                  <tr><td colSpan="4" className="p-20 text-center text-slate-500">No previous scans found.</td></tr>
                 )}
               </tbody>
             </table>
