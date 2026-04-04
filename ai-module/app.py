@@ -7,6 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 # AI Knowledge Base
+# AI Knowledge Base - Updated with new skills
 job_roles = {
     "python": ["Backend Developer", "Data Scientist", "Software Engineer"],
     "react": ["Frontend Developer", "UI/UX Engineer"],
@@ -14,9 +15,13 @@ job_roles = {
     "javascript": ["Web Developer", "App Developer"],
     "mongodb": ["Database Administrator"],
     "sql": ["Data Analyst", "Database Engineer"],
-    "java":["Data engineering "],
-    "html": ["Frontend Developer"],
-    "css":["Web Developer"]
+    "java": ["Backend Developer", "Data Engineer", "Android Developer"],
+    "html": ["Frontend Developer", "Web Designer"],
+    "css": ["Web Developer", "UI Designer"],
+    "c++": ["Game Developer", "Systems Engineer", "Competitive Programmer"],
+    "c": ["Embedded Systems Engineer", "Kernel Developer"],
+    "typescript": ["Frontend Architect", "Full Stack Developer"],
+    "docker": ["DevOps Engineer", "Cloud Engineer"]
 }
 
 project_keywords = ["github", "deployed", "live link", "api", "database", "optimized", "developed", "portfolio"]
